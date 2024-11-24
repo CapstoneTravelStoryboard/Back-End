@@ -28,12 +28,14 @@ public class CustomOAuth2MemberService implements OAuth2UserService<OAuth2UserRe
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
-        OAuth2User oAuth2User = delegate.loadUser(userRequest);
+
+        OAuth2User oAuth2User = delegate.loadUser(userRequest);  // oAuth2User : 구글로부터 받은 사용자 정보를 담을 객체
 
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         String userNameAttributeName = userRequest.getClientRegistration().getProviderDetails()
                 .getUserInfoEndpoint().getUserNameAttributeName();
 
+        // 제공된 사용자 정보와 등록된 OAuth2 클라이언트 정보를 사용하여 OAuthAttributes 객체 생성
         OAuthAttributes attributes = OAuthAttributes.of(registrationId, userNameAttributeName, oAuth2User.getAttributes());
 
         Member member = saveOrUpdate(attributes);

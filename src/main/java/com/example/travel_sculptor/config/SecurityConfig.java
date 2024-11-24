@@ -23,6 +23,10 @@ public class SecurityConfig {
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
+                /***
+                 * anyRequest().authenticated() : 따로 설정하지 않은 이외 요청에 대해 인증을 요구한다.
+                 * Spring Security는 자동으로 google 로그인 페이지로 리다이렉트한다.
+                 */
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/login", "/api/v1/examples/**").permitAll()
                         .requestMatchers("/admin").hasRole(Role.ADMIN.name())
