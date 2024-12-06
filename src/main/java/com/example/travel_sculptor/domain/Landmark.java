@@ -19,7 +19,8 @@ public class Landmark {
     @Column(nullable = false)
     private String name;      // 장소명
 
-    @Column(length = 1000)
+    // TEXT 타입으로 변경
+    @Column(columnDefinition = "TEXT")
     private String description;  // 설명
 
     private String hashTag;     // 해시태그

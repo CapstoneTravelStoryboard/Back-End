@@ -1,11 +1,19 @@
 package com.example.travel_sculptor.controller;
 
+import com.example.travel_sculptor.service.StoryboardService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/storyboards")
+@RequiredArgsConstructor
 public class StoryboardController {
 
+    private final StoryboardService storyboardService;
+
+    /***
+     * 스토리보드 생성 시, 여행
+     */
     /***
      * a single trip can have multiple storyboards
      * @return storyboard 요약 정보를 담은 DTO 객체 list (제목, 여행날짜, 위치)

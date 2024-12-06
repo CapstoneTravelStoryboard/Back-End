@@ -26,7 +26,7 @@ public class Storyboard extends BaseTimeEntity {
     @Column(nullable = false)
     private String title;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "landmark_id")
     private Landmark landmark;
 
@@ -39,7 +39,7 @@ public class Storyboard extends BaseTimeEntity {
 
     private LocalDate startDate;
     private LocalDate endDate;
-    
+
     private String thumbnail = "default_url ";   // 썸네일 이미지 url
 
     @Column(columnDefinition = "TEXT")

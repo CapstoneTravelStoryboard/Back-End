@@ -1,7 +1,6 @@
 package com.example.travel_sculptor.config;
 
 import com.example.travel_sculptor.config.auth.CustomOAuth2MemberService;
-import com.example.travel_sculptor.domain.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -28,9 +27,11 @@ public class SecurityConfig {
                  * Spring Security는 자동으로 google 로그인 페이지로 리다이렉트한다.
                  */
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/login", "/api/v1/examples/**").permitAll()
+                        //모든 경로 허용
+                        .requestMatchers("/**").permitAll()
+                        /*.requestMatchers("/", "/login", "/api/v1/examples/**").permitAll()
                         .requestMatchers("/admin").hasRole(Role.ADMIN.name())
-                        .requestMatchers("/api/v1/recommendations/**", "/api/v1/storyboards/**").hasRole(Role.USER.name())
+                        .requestMatchers("/api/v1/recommendations/**", "/api/v1/storyboards/**").hasRole(Role.USER.name())*/
                         .anyRequest().authenticated()
                 )
                 .logout(logout -> logout
