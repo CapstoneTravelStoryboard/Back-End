@@ -20,9 +20,8 @@ public class Scene extends BaseTimeEntity {
     @JoinColumn(name = "storyboard_id", nullable = false)
     private Storyboard storyboard;
 
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private SceneType sceneType;
+    private String title;
 
     @Column(nullable = false)
     private Integer orderNum;
@@ -39,13 +38,12 @@ public class Scene extends BaseTimeEntity {
     @Column(length = 100)
     private String composition;
 
+
     private String imageUrl;
 
     @Builder
-    public Scene(SceneType sceneType, Integer orderNum, String description,
-                 String cameraAngle, String cameraMovement, String composition,
-                 String imageUrl) {
-        this.sceneType = sceneType;
+    public Scene(String title, Integer orderNum, String description, String cameraAngle, String cameraMovement, String composition, String imageUrl) {
+        this.title = title;
         this.orderNum = orderNum;
         this.description = description;
         this.cameraAngle = cameraAngle;

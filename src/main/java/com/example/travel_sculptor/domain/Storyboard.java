@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +18,7 @@ public class Storyboard extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
@@ -25,12 +26,21 @@ public class Storyboard extends BaseTimeEntity {
     @Column(nullable = false)
     private String title;
 
-    private String destination;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "landmark_id")
+    private Landmark landmark;
 
     private String companions;
 
+    private int companionCount;
+
     @Column(columnDefinition = "TEXT")
     private String purpose;
+
+    private LocalDate startDate;
+    private LocalDate endDate;
+    
+    private String thumbnail = "default_url ";   // 썸네일 이미지 url
 
     @Column(columnDefinition = "TEXT")
     private String intro;
@@ -38,21 +48,28 @@ public class Storyboard extends BaseTimeEntity {
     @Column(columnDefinition = "TEXT")
     private String outro;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "trip_id")
+    private Trip trip;
+
     @JsonManagedReference
     @OneToMany(mappedBy = "storyboard", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("orderNum ASC")
     private List<Scene> scenes = new ArrayList<>();
 
     @Builder
-    public Storyboard(String title, String destination, String companions,
-                      String purpose, String intro, String outro) {
+    public Storyboard(String title, Landmark landmark, String companions, int companionCount, String purpose, LocalDate startDate, LocalDate endDate, String intro, String outro) {
         this.title = title;
-        this.destination = destination;
+        this.landmark = landmark;
         this.companions = companions;
+        this.companionCount = companionCount;
         this.purpose = purpose;
+        this.startDate = startDate;
+        this.endDate = endDate;
         this.intro = intro;
         this.outro = outro;
     }
+
 
     protected void setMember(Member member) {
         this.member = member;
