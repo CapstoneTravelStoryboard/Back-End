@@ -1,4 +1,4 @@
-package com.example.travel_sculptor.dto;
+package com.example.travel_sculptor.dto.member;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
