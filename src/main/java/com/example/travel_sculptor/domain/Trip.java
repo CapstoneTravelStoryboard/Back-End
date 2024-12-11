@@ -1,11 +1,14 @@
 package com.example.travel_sculptor.domain;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -17,25 +20,27 @@ public class Trip extends BaseTimeEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "member_id")
     private Member member;
 
     private String title;
 
     @Column(name = "day_start")
-    private LocalDate dayStart;
+    private LocalDateTime dayStart;
 
-    //    @OneToMany(mappedBy = "trip")
-//    private List<Storyboard> storyboards = new ArrayList<>();
+    @JsonManagedReference
+    @OneToMany(mappedBy = "trip")
+    private List<Storyboard> storyboards = new ArrayList<>();
 
     @Builder
-    // only title
-    public Trip(String title) {
+    public Trip(Member member, String title, LocalDateTime dayStart) {
+        this.member = member;
         this.title = title;
+        this.dayStart = dayStart;
     }
 
     // update dayStart when Storyboard is created
-    public void updateDayStart(LocalDate dayStart) {
+    public void updateDayStart(LocalDateTime dayStart) {
         this.dayStart = dayStart;
     }
 
