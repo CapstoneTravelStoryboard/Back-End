@@ -1,46 +1,65 @@
 package com.example.travel_sculptor.config;
 
-import com.example.travel_sculptor.config.auth.CustomOAuth2MemberService;
+import com.example.travel_sculptor.config.auth.CustomUserDetailsService;
+import com.example.travel_sculptor.config.auth.JwtAuthenticationFilter;
+import com.example.travel_sculptor.config.auth.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    @Autowired
-    private final CustomOAuth2MemberService customOAuth2UserService;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final CustomUserDetailsService customUserDetailsService;
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                /***
-                 * anyRequest().authenticated() : 따로 설정하지 않은 이외 요청에 대해 인증을 요구한다.
-                 * Spring Security는 자동으로 google 로그인 페이지로 리다이렉트한다.
-                 */
+                .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         //모든 경로 허용
-                        .requestMatchers("/**").permitAll()
-                        /*.requestMatchers("/", "/login", "/api/v1/examples/**").permitAll()
-                        .requestMatchers("/admin").hasRole(Role.ADMIN.name())
-                        .requestMatchers("/api/v1/recommendations/**", "/api/v1/storyboards/**").hasRole(Role.USER.name())*/
+                        /*.requestMatchers("/**").permitAll()*/
+                        .requestMatchers("/api/v1/members/signup", "/api/v1/members/login").permitAll()
+                        // Swagger UI 접근 허용
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/api/v1/examples/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                .logout(logout -> logout
-                        .logoutSuccessUrl("/")
-                )
-                .oauth2Login(oauth2 -> oauth2
-                        .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
-                );
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, customUserDetailsService),
+                        UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public CorsFilter corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.addAllowedOriginPattern("*");
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
+        source.registerCorsConfiguration("/api/**", config);
+        return new CorsFilter(source);
     }
 }

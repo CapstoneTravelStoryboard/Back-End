@@ -1,7 +1,10 @@
 package com.example.travel_sculptor.service;
 
+import com.example.travel_sculptor.config.auth.JwtTokenProvider;
 import com.example.travel_sculptor.domain.Member;
+import com.example.travel_sculptor.dto.member.LoginResponse;
 import com.example.travel_sculptor.dto.member.MemberLoginRequest;
+import com.example.travel_sculptor.dto.member.MemberResponse;
 import com.example.travel_sculptor.dto.member.MemberSignupRequest;
 import com.example.travel_sculptor.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +17,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
 
     /***
      * 회원가입
@@ -45,14 +49,17 @@ public class MemberService {
      * @param request
      * @return
      */
-    public Member login(MemberLoginRequest request) {
+    public LoginResponse login(MemberLoginRequest request) {
         Member member = memberRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("등록되지 않은 이메일입니다."));
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
         if (!passwordEncoder.matches(request.getPassword(), member.getPassword())) {
             throw new RuntimeException("비밀번호가 일치하지 않습니다.");
         }
 
-        return member;
+        // JWT 토큰 생성
+        String token = jwtTokenProvider.createToken(member.getEmail(), member.getName());
+
+        return new LoginResponse(token, MemberResponse.of(member));
     }
 }
