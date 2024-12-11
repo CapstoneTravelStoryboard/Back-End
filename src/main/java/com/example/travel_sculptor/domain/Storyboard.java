@@ -1,5 +1,6 @@
 package com.example.travel_sculptor.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -50,6 +51,7 @@ public class Storyboard extends BaseTimeEntity {
 
     private boolean imageCreated = false;
 
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trip_id")
     private Trip trip;

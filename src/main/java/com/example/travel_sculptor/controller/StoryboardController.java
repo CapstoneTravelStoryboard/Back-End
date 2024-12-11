@@ -1,7 +1,9 @@
 package com.example.travel_sculptor.controller;
 
+import com.example.travel_sculptor.dto.scene.SceneSummaryDTO;
 import com.example.travel_sculptor.dto.storyboard.StoryboardCreateRequestDTO;
 import com.example.travel_sculptor.dto.storyboard.StoryboardCreateResponseDTO;
+import com.example.travel_sculptor.dto.storyboard.StoryboardSummaryDTO;
 import com.example.travel_sculptor.service.FastapiService;
 import com.example.travel_sculptor.service.MemberService;
 import com.example.travel_sculptor.service.StoryboardService;
@@ -9,8 +11,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/api/v1/storyboards")
+@RequestMapping("/api/v1/{tripId}/storyboards")
 @RequiredArgsConstructor
 public class StoryboardController {
 
@@ -24,9 +28,8 @@ public class StoryboardController {
      * @return 장면 리스트
      */
     @PostMapping
-    public StoryboardCreateResponseDTO create(@RequestBody StoryboardCreateRequestDTO storyboardCreateRequestDTO) {
-
-        return fastapiService.createStoryboard(storyboardCreateRequestDTO);
+    public StoryboardCreateResponseDTO create(@PathVariable Long tripId, @RequestBody StoryboardCreateRequestDTO storyboardCreateRequestDTO) {
+        return fastapiService.createStoryboard(tripId, storyboardCreateRequestDTO);
     }
 
     /***
@@ -44,8 +47,8 @@ public class StoryboardController {
      * @return storyboard 요약 정보를 담은 DTO 객체 list (제목, 여행날짜, 위치)
      */
     @GetMapping
-    public String getStoryboards() {
-        return "getStoryboards";
+    public List<StoryboardSummaryDTO> getStoryboards(@PathVariable Long tripId) {
+        return storyboardService.getStoryboards(tripId);
     }
 
 
@@ -54,26 +57,26 @@ public class StoryboardController {
      * @return
      */
     @GetMapping("/{id}")
-    public String getStoryboard() {
-        return "getStoryboard";
+    public SceneSummaryDTO getStoryboard(@PathVariable Long id) {
+        return storyboardService.getStoryboardDetail(id);
     }
 
     @PatchMapping("/{id}")
-    public String updateStoryboard() {
+    public String updateStoryboard(@PathVariable Long id) {
         return "updateStoryboard";
     }
 
     @DeleteMapping("/{id}")
-    public String deleteStoryboard() {
+    public String deleteStoryboard(@PathVariable Long id) {
         return "deleteStoryboard";
     }
 
-    /***
-     * 스토리보드를 다시 로드한다.
-     * @return scene list
-     */
-    @PostMapping("/{id}/reload")
-    public String reloadStoryboard() {
-        return "reloadStoryboard";
-    }
+//    /***
+//     * 스토리보드를 다시 로드한다.
+//     * @return scene list
+//     */
+//    @PostMapping("/{id}/reload")
+//    public String reloadStoryboard() {
+//        return "reloadStoryboard";
+//    }
 }

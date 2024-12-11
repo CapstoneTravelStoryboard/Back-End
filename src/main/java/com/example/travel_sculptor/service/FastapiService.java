@@ -115,14 +115,14 @@ public class FastapiService {
      * @param storyboardCreateRequestDTO
      * @return
      */
-    public StoryboardCreateResponseDTO createStoryboard(StoryboardCreateRequestDTO storyboardCreateRequestDTO) {
+    public StoryboardCreateResponseDTO createStoryboard(Long tripId, StoryboardCreateRequestDTO storyboardCreateRequestDTO) {
 
         // 현재 로그인한 사용자 정보 조회
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("Member not found"));
 
-        Optional<Trip> trip = tripRepository.findById(storyboardCreateRequestDTO.getTripId());
+        Optional<Trip> trip = tripRepository.findById(tripId);
         if (trip.isEmpty()) {
             throw new IllegalArgumentException("Trip not found");
         }
@@ -232,6 +232,8 @@ public class FastapiService {
     /***
      * 스토리보드 장면 별 이미지 생성 요청
      * @param storyboardId
+     * @param season
+     * @throws Exception
      */
     public void createImages(Long storyboardId, String season) throws Exception {
 
@@ -292,20 +294,18 @@ public class FastapiService {
 //        }
 
         // FastAPI 서버로 요청 전송
-        Mono<List<String>> response = webClient.post()
+        Mono<String> response = webClient.post()
                 .uri("/fastapi/images") // FastAPI 엔드포인트 URI
                 .bodyValue(imageFastapiRequestDTOs) // 요청 body에 DTO 전달
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<List<String>>() {
+                .bodyToMono(new ParameterizedTypeReference<String>() {
                 });// 응답 타입 매핑
 
-        List<String> block = response.block();// 동기 방식으로 결과를 반환 (비동기 원한다면 변경 가능)
+        String responseMessage = response.block();// 동기 방식으로 결과를 반환 (비동기 원한다면 변경 가능)
 
         //테스트 출력용
         try {
-            for (String str : block) {
-                System.out.println(str);
-            }
+            System.out.println(responseMessage);
         } catch (NullPointerException e) {
             System.out.println("No response from FastAPI");
         }
