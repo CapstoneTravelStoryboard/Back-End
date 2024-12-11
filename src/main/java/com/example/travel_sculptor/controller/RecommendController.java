@@ -25,8 +25,6 @@ public class RecommendController {
     @PostMapping("/titles")
     public List<String> recommendTitle(@RequestBody TitleRequestDTO titleRequestDTO) {
         return fastapiService.recommendTitle(titleRequestDTO);
-
-
     }
 
     /***

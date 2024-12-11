@@ -19,6 +19,7 @@ public class TitleFastapiRequestDTO {
     private String description; //여행지 특성
     private String purpose; //여행목적 (hashtag 값)
     private String companions; //동행인
+
     @JsonProperty("companion_count")
     private int companionCount; //동행인 수
     private String season; //계절

@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,16 +37,18 @@ public class Storyboard extends BaseTimeEntity {
     @Column(columnDefinition = "TEXT")
     private String purpose;
 
-    private LocalDate startDate;
-    private LocalDate endDate;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
 
-    private String thumbnail = "default_url ";   // 썸네일 이미지 url
+    private String thumbnail;   // 썸네일 이미지 url
 
     @Column(columnDefinition = "TEXT")
     private String intro;
 
     @Column(columnDefinition = "TEXT")
     private String outro;
+
+    private boolean imageCreated = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trip_id")
@@ -58,7 +60,9 @@ public class Storyboard extends BaseTimeEntity {
     private List<Scene> scenes = new ArrayList<>();
 
     @Builder
-    public Storyboard(String title, Landmark landmark, String companions, int companionCount, String purpose, LocalDate startDate, LocalDate endDate, String intro, String outro) {
+    public Storyboard(Trip trip, Member member, String title, Landmark landmark, String companions, int companionCount, String purpose, LocalDateTime startDate, LocalDateTime endDate, String intro, String outro) {
+        this.trip = trip;
+        this.member = member;
         this.title = title;
         this.landmark = landmark;
         this.companions = companions;
