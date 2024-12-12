@@ -60,4 +60,20 @@ public class TripService {
 
         return tripListResponseDTOList;
     }
+
+    public void deleteTrip(Long tripId) {
+        // 현재 로그인한 사용자 정보 조회
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Member not found"));
+
+        Trip trip = tripRepository.findById(tripId)
+                .orElseThrow(() -> new IllegalArgumentException("Trip not found"));
+
+        if (!trip.getMember().getId().equals(member.getId())) {
+            throw new IllegalArgumentException("You are not the owner of this trip");
+        }
+
+        tripRepository.delete(trip);
+    }
 }

@@ -7,11 +7,13 @@ import com.example.travel_sculptor.dto.member.MemberLoginRequest;
 import com.example.travel_sculptor.dto.member.MemberResponse;
 import com.example.travel_sculptor.dto.member.MemberSignupRequest;
 import com.example.travel_sculptor.repository.MemberRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class MemberService {
 
