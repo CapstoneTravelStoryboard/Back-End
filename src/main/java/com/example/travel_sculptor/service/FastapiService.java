@@ -179,8 +179,8 @@ public class FastapiService {
                 .companions(storyboardCreateRequestDTO.getCompanions())
                 .companionCount(storyboardCreateRequestDTO.getCompanionCount())
                 .purpose(storyboardCreateRequestDTO.getPurpose())
-                .startDate(storyboardCreateRequestDTO.getStartDate())
-                .endDate(storyboardCreateRequestDTO.getEndDate())
+                .startDate(storyboardCreateRequestDTO.getStartDateTime())
+                .endDate(storyboardCreateRequestDTO.getEndDateTime())
                 .intro(storyboardCreateRequestDTO.getIntro())
                 .outro(storyboardCreateRequestDTO.getOutro())
                 .build();
@@ -202,7 +202,7 @@ public class FastapiService {
         Storyboard savedStoryboard = storyboardRepository.save(storyboard);
 
         //trip의 dayStart 업데이트 후 DB에 저장
-        trip.get().updateDayStart(storyboardCreateRequestDTO.getStartDate());
+        trip.get().updateDayStart(storyboardCreateRequestDTO.getStartDateTime());
 
 
         // 프론트로 응답할 DTO 생성

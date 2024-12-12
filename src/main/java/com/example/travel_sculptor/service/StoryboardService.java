@@ -45,7 +45,7 @@ public class StoryboardService {
             String name = landmark.getName();
 
             // province, district, name을 합쳐서 landmarkInfo 생성
-            String landmarkInfo = String.format("%s, %s, %s", province, district, name);
+            String landmarkInfo = String.format("%s %s %s", province, district, name);
 
             storyboardSummaryDTOList.add(StoryboardSummaryDTO.builder()
                     .id(storyboard.getId())
@@ -69,7 +69,8 @@ public class StoryboardService {
 
         for (Scene scene : sceneList) {
             sceneSummaryDTOList.add(SceneSummaryDTO.builder()
-                    .id(scene.getId())
+                    .sceneId(scene.getId())
+                    .orderNum(scene.getOrderNum())
                     .title(scene.getTitle())
                     .description(scene.getDescription())
                     .build());
@@ -92,8 +93,8 @@ public class StoryboardService {
         }
 
         storyboard.setTitle(request.getTitle());
-        storyboard.setStartDate(request.getStartDate());
-        storyboard.setEndDate(request.getEndDate());
+        storyboard.setStartDate(request.getStartDateTime());
+        storyboard.setEndDate(request.getEndDateTime());
 
         storyboardRepository.save(storyboard);
 
@@ -113,5 +114,65 @@ public class StoryboardService {
         }
 
         storyboardRepository.delete(storyboard);
+    }
+
+    /***
+     * 예시 스토리보드 목록 조회
+     * @return
+     */
+    public List<StoryboardSummaryDTO> getExampleStoryboards() {
+        List<Storyboard> storyboardExamples = storyboardRepository.findByIsExampleTrue();
+
+        List<StoryboardSummaryDTO> storyboardSummaryDTOList = new ArrayList<>();
+
+        // StoryboardSummaryDTO로 변환
+        for (Storyboard storyboard : storyboardExamples) {
+            Landmark landmark = storyboard.getLandmark();
+            String province = landmark.getRegion().getProvince();
+            String district = landmark.getRegion().getDistrict();
+            String name = landmark.getName();
+
+            // province, district, name을 합쳐서 landmarkInfo 생성
+            String landmarkInfo = String.format("%s, %s, %s", province, district, name);
+
+            storyboardSummaryDTOList.add(StoryboardSummaryDTO.builder()
+                    .id(storyboard.getId())
+                    .title(storyboard.getTitle())
+                    .startDate(storyboard.getStartDate())
+                    .companions(storyboard.getCompanions())
+                    .landmarkInfo(landmarkInfo)
+                    .build());
+        }
+
+        return storyboardSummaryDTOList;
+
+    }
+
+
+    /***
+     * 예시 스토리보드 상세 조회
+     * @param id
+     * @return
+     */
+    public List<SceneSummaryDTO> getExampleStoryboardDetail(Long id) {
+        Storyboard storyboard = storyboardRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("ExampleStoryboard not found"));
+
+
+        List<Scene> sceneList = storyboard.getScenes();
+
+        List<SceneSummaryDTO> sceneSummaryDTOList = new ArrayList<>();
+
+        for (Scene scene : sceneList) {
+            sceneSummaryDTOList.add(SceneSummaryDTO.builder()
+                    .sceneId(scene.getId())
+                    .orderNum(scene.getOrderNum())
+                    .title(scene.getTitle())
+                    .description(scene.getDescription())
+                    .build());
+        }
+
+        return sceneSummaryDTOList;
+
     }
 }

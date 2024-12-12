@@ -16,6 +16,15 @@ public class StoryboardCreateRequestDTO {
     private String title;   //제목
     private String intro;   //인트로
     private String outro;   //아웃트로
-    private LocalDateTime startDate; //여행시작일
-    private LocalDateTime endDate;   //여행종료일
+    private String startDate; // 여행 시작일
+    private String endDate;   // 여행 종료일
+
+    // LocalDateTime으로 변환하는 메서드
+    public LocalDateTime getStartDateTime() {
+        return LocalDateTime.parse(startDate);
+    }
+
+    public LocalDateTime getEndDateTime() {
+        return LocalDateTime.parse(endDate);
+    }
 }
