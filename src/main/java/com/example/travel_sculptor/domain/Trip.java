@@ -29,7 +29,7 @@ public class Trip extends BaseTimeEntity {
     private LocalDateTime dayStart;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "trip")
+    @OneToMany(mappedBy = "trip", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Storyboard> storyboards = new ArrayList<>();
 
     @Builder

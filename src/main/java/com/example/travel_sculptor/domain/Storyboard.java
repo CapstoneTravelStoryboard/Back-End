@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -20,10 +21,12 @@ public class Storyboard extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
+    @Setter
     @Column(nullable = false)
     private String title;
 
@@ -38,10 +41,11 @@ public class Storyboard extends BaseTimeEntity {
     @Column(columnDefinition = "TEXT")
     private String purpose;
 
+    @Setter
     private LocalDateTime startDate;
-    private LocalDateTime endDate;
 
-    private String thumbnail;   // 썸네일 이미지 url
+    @Setter
+    private LocalDateTime endDate;
 
     @Column(columnDefinition = "TEXT")
     private String intro;
@@ -49,7 +53,8 @@ public class Storyboard extends BaseTimeEntity {
     @Column(columnDefinition = "TEXT")
     private String outro;
 
-    private boolean imageCreated = false;
+    // 예시 스토리보드인지 아닌지
+    private boolean isExample = false;
 
     @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
@@ -74,11 +79,6 @@ public class Storyboard extends BaseTimeEntity {
         this.endDate = endDate;
         this.intro = intro;
         this.outro = outro;
-    }
-
-
-    protected void setMember(Member member) {
-        this.member = member;
     }
 
     // 연관관계 편의 메서드

@@ -1,5 +1,6 @@
 package com.example.travel_sculptor.domain;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,6 +30,7 @@ public class Member extends BaseTimeEntity {
 //    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
 //    private List<UserCredential> credentials = new ArrayList<>();
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Storyboard> storyboards = new ArrayList<>();
 
