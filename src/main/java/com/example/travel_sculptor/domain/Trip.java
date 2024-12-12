@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ public class Trip extends BaseTimeEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @Setter
     private String title;
 
     @Column(name = "day_start")

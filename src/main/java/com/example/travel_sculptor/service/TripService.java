@@ -75,5 +75,24 @@ public class TripService {
         }
 
         tripRepository.delete(trip);
+        tripRepository.flush(); // delete 즉시 반영
+    }
+
+    public void updateTrip(Long tripId, String title) {
+        // 현재 로그인한 사용자 정보 조회
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Member not found"));
+
+        Trip trip = tripRepository.findById(tripId)
+                .orElseThrow(() -> new IllegalArgumentException("Trip not found"));
+
+        if (!trip.getMember().getId().equals(member.getId())) {
+            throw new IllegalArgumentException("You are not the owner of this trip");
+        }
+
+        trip.setTitle(title);
+
+        tripRepository.save(trip);
     }
 }

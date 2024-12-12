@@ -39,6 +39,16 @@ public class TripController {
     }
 
     /***
+     * 여행 수정
+     */
+    @Operation(summary = "여행 수정", description = "여행 수정")
+    @PostMapping("/{tripId}")
+    public ResponseEntity<String> updateTrip(@PathVariable Long tripId, @RequestBody String title) {
+        tripService.updateTrip(tripId, title);
+        return ResponseEntity.ok("Trip updated");
+    }
+
+    /***
      * 여행 삭제
      * @param tripId
      * @return
