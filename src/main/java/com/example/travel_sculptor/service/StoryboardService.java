@@ -24,6 +24,7 @@ public class StoryboardService {
     private final TripRepository tripRepository;
     private final MemberRepository memberRepository;
 
+
     /***
      * 스토리보드 조회
      * @param tripId
@@ -114,6 +115,7 @@ public class StoryboardService {
         }
 
         storyboardRepository.delete(storyboard);
+        storyboardRepository.flush(); // delete 즉시 반영
     }
 
     /***

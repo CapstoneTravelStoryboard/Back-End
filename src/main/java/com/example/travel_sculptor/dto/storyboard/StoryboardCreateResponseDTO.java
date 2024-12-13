@@ -24,6 +24,7 @@ public class StoryboardCreateResponseDTO {
     @Getter
     @Setter
     public static class SceneSummaryDTO {
+        private Long sceneId;
         private int orderNum;
         private String sceneTitle;
         private String description;

@@ -5,10 +5,7 @@ import com.example.travel_sculptor.dto.fastapi.*;
 import com.example.travel_sculptor.dto.recommend.TitleRequestDTO;
 import com.example.travel_sculptor.dto.storyboard.StoryboardCreateRequestDTO;
 import com.example.travel_sculptor.dto.storyboard.StoryboardCreateResponseDTO;
-import com.example.travel_sculptor.repository.LandmarkRepository;
-import com.example.travel_sculptor.repository.MemberRepository;
-import com.example.travel_sculptor.repository.StoryboardRepository;
-import com.example.travel_sculptor.repository.TripRepository;
+import com.example.travel_sculptor.repository.*;
 import com.example.travel_sculptor.util.SceneDescriptionGenerator;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,18 +31,20 @@ public class FastapiService {
     private final TripRepository tripRepository;
 
     private final WebClient webClient;
+    private final SceneRepository sceneRepository;
 
     @Value("${aws.s3.bucket.name}")
     private String bucketName;
 
     @Autowired
     public FastapiService(StoryboardRepository storyboardRepository, LandmarkRepository landmarkRepository, MemberService memberService,
-                          WebClient.Builder webClientBuilder, @Value("${fastapi.server.url}") String serverUrl, MemberRepository memberRepository, TripRepository tripRepository) {
+                          WebClient.Builder webClientBuilder, @Value("${fastapi.server.url}") String serverUrl, MemberRepository memberRepository, TripRepository tripRepository, SceneRepository sceneRepository) {
         this.storyboardRepository = storyboardRepository;
         this.landmarkRepository = landmarkRepository;
         this.webClient = webClientBuilder.baseUrl(serverUrl).build();
         this.memberRepository = memberRepository;
         this.tripRepository = tripRepository;
+        this.sceneRepository = sceneRepository;
     }
 
 
@@ -211,13 +210,14 @@ public class FastapiService {
                 StoryboardCreateResponseDTO.builder()
                         .id(savedStoryboard.getId())
                         .storyboardScenes(
-                                storyboardFastapiResponseDTO.getStoryboardScenes().stream()
-                                        .map(sceneDTO -> {
+                                sceneRepository.findAllByStoryboardId(savedStoryboard.getId()).stream()
+                                        .map(scene -> {
                                             StoryboardCreateResponseDTO.SceneSummaryDTO summaryDTO =
                                                     new StoryboardCreateResponseDTO.SceneSummaryDTO();
-                                            summaryDTO.setOrderNum(sceneDTO.getOrderNum());
-                                            summaryDTO.setSceneTitle(sceneDTO.getSceneTitle());
-                                            summaryDTO.setDescription(sceneDTO.getDescription());
+                                            summaryDTO.setSceneId(scene.getId());
+                                            summaryDTO.setOrderNum(scene.getOrderNum());
+                                            summaryDTO.setSceneTitle(scene.getTitle());
+                                            summaryDTO.setDescription(scene.getDescription());
                                             return summaryDTO;
                                         })
                                         .collect(Collectors.toList())

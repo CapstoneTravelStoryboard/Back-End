@@ -56,7 +56,6 @@ public class SceneService {
                 sceneDetailDTO.getCameraAngle(), sceneDetailDTO.getCameraMovement(), sceneDetailDTO.getComposition());
 
         sceneRepository.save(scene);
-
     }
 
     public void deleteScene(Long id) {
@@ -72,5 +71,6 @@ public class SceneService {
             throw new IllegalArgumentException("You are not the owner of this Scene");
 
         sceneRepository.delete(scene);
+        sceneRepository.flush();
     }
 }
